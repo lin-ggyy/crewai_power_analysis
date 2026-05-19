@@ -1,54 +1,89 @@
-# Crewai Crew
+# 发电组合策略分析系统
 
-Welcome to the Crewai Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+基于 [CrewAI](https://crewai.com) 多智能体框架构建的发电侧电力交易决策辅助工具，适用于火电、风电、光伏混合机组的日前市场分析。
 
-## Installation
+## 核心功能
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+- **新能源出力预测**：基于风速、日照等气象数据，逐时预测风电和光伏出力
+- **火电成本分析**：根据煤价、煤耗等参数计算边际成本和最优出力区间
+- **组合策略生成**：整合预测与成本，输出现货申报建议、收益测算和风险评估
 
-First, if you haven't already, install uv:
+## 智能体架构
 
-```bash
+三个智能体按顺序协作：
+
+1. **新能源出力分析师**：将天气预报转化为出力预测，评估预测可信度
+2. **火电经济分析师**：计算发电成本曲线，判断机组盈利区间和启停时机
+3. **发电组合策略师**：综合前两者输出，制定全局最优策略和风险预案
+
+流程：出力预测 → 成本分析 → 策略决策
+
+## 快速开始
+
+### 环境要求
+
+- Python >= 3.10, < 3.14
+- [uv](https://docs.astral.sh/uv/) 包管理器
+
+### 安装
+
+```
 pip install uv
+cd crewai
+uv sync
 ```
 
-Next, navigate to your project directory and install the dependencies:
+### 配置
 
-(Optional) Lock the dependencies and install them by using the CLI command:
-```bash
-crewai install
+在项目根目录创建 .env 文件：
+
 ```
-### Customizing
-
-**Add your `OPENAI_API_KEY` into the `.env` file**
-
-- Modify `src/crewai/config/agents.yaml` to define your agents
-- Modify `src/crewai/config/tasks.yaml` to define your tasks
-- Modify `src/crewai/crew.py` to add your own logic, tools and specific args
-- Modify `src/crewai/main.py` to add custom inputs for your agents and tasks
-
-## Running the Project
-
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
-
-```bash
-$ crewai run
+MODEL=deepseek/deepseek-chat
+DEEPSEEK_API_KEY=sk-你的key
 ```
 
-This command initializes the Crewai Crew, assembling the agents and assigning them tasks as defined in your configuration.
+### 运行
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+```
+crewai run
+```
 
-## Understanding Your Crew
+策略报告输出至 output/策略报告.md。
 
-The Crewai Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+### 自定义参数
 
-## Support
+编辑 src/power_portfolio_analysis/main.py 中的 inputs 字典：
 
-For support, questions, or feedback regarding the Crewai Crew or crewAI.
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
+| 参数 | 说明 | 示例值 |
+| --- | --- | --- |
+| date_range | 分析日期 | 2026-05-20 |
+| wind_capacity | 风电装机 (MW) | 200 |
+| solar_capacity | 光伏装机 (MW) | 150 |
+| thermal_capacity | 火电装机 (MW) | 600 |
+| min_output | 最小技术出力 (MW) | 180 |
+| coal_price | 煤价 (元/吨) | 800 |
+| coal_rate | 供电煤耗 (克/度) | 310 |
+| startup_cost | 启动成本 (元) | 500000 |
+| ramp_rate | 爬坡速率 (MW/h) | 60 |
+| weather_data | 天气数据 (逐时温度/风速/日照) | CSV 格式 |
+| market_price | 日前电价 (逐时) | CSV 格式 |
+| contracted_volume | 中长期合约电量 (MWh) | 500 |
+| contract_price | 合约电价 (元/MWh) | 380 |
 
-Let's create wonders together with the power and simplicity of crewAI.
+### 项目结构
+
+```
+├── src/power_portfolio_analysis/
+│   ├── config/
+│   │   ├── agents.yaml
+│   │   └── tasks.yaml
+│   ├── tools/
+│   │   └── custom_tool.py
+│   ├── crew.py
+│   └── main.py
+├── output/
+│   └── 策略报告.md
+├── knowledge/
+├── pyproject.toml
+└── .env
+```
