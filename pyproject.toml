@@ -1,20 +1,20 @@
 [project]
-name = "crewai"
+name = "power-portfolio-analysis"
 version = "0.1.0"
-description = "Crewai using crewAI"
-authors = [{ name = "Your Name", email = "you@example.com" }]
+description = "Power Generation Portfolio Analysis Crew"
+authors = [{ name = "lin-ggyy", email = "3320731059@qq.com" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
     "crewai[tools]==1.14.4"
 ]
 
 [project.scripts]
-crewai = "crewai.main:run"
-run_crew = "crewai.main:run"
-train = "crewai.main:train"
-replay = "crewai.main:replay"
-test = "crewai.main:test"
-run_with_trigger = "crewai.main:run_with_trigger"
+crewai = "power_portfolio_analysis.main:run"
+run_crew = "power_portfolio_analysis.main:run"
+train = "power_portfolio_analysis.main:train"
+replay = "power_portfolio_analysis.main:replay"
+test = "power_portfolio_analysis.main:test"
+run_with_trigger = "power_portfolio_analysis.main:run_with_trigger"
 
 [build-system]
 requires = ["hatchling"]

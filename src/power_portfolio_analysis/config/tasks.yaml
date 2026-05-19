@@ -1,0 +1,73 @@
+renewable_forecast_task:
+  description: >
+    根据输入的天气预报数据和装机容量，预测 {date_range} 每小时的
+    风电和光伏出力。
+
+    风电装机：{wind_capacity} MW
+    光伏装机：{solar_capacity} MW
+    天气数据：{weather_data}
+
+    请按小时估算：
+    1. 风电出力（MW）
+    2. 光伏出力（MW）
+    3. 新能源总出力（MW）
+    4. 预测可信度（高/中/低）
+  expected_output: >
+    一份中文的新能源出力预测表（markdown格式），包含以下列：
+    时段、风电出力(MW)、光伏出力(MW)、总出力(MW)、可信度、关键天气因素说明。
+    并在表后附上一段文字总结：当天新能源出力特点和需要关注的风险点。
+    全部使用中文输出。
+  agent: renewable_analyst
+
+thermal_cost_task:
+  description: >
+    根据火电机组参数，计算机组的发电成本和最优出力区间。
+
+    火电装机：{thermal_capacity} MW
+    最小技术出力：{min_output} MW
+    煤价：{coal_price} 元/吨
+    供电煤耗：{coal_rate} 克/度
+    启动成本：{startup_cost} 元
+    爬坡速率：{ramp_rate} MW/小时
+
+    请计算：
+    1. 不同出力水平下的度电边际成本（元/MWh）
+    2. 最小技术出力下的运行成本
+    3. 在当前市场电价下，火电盈利的出力区间
+  expected_output: >
+    一份中文的火电经济分析报告，包括：
+    1. 边际成本曲线说明
+    2. 盈亏平衡电价分析
+    3. 建议出力区间（最低xxx MW，最优xxx MW）
+    4. 启停决策建议
+    全部使用中文输出。
+  agent: thermal_economist
+
+portfolio_decision_task:
+  description: >
+    整合新能源出力预测和火电成本分析，制定 {date_range} 的
+    完整发电组合策略。
+
+    日前市场参考电价：{market_price}
+    中长期合约电量：{contracted_volume} MWh
+    合约电价：{contract_price} 元/MWh
+
+    请基于新能源预测和火电成本分析的输出结果，确定：
+    1. 24小时逐时发电计划
+    2. 现货市场申报量价建议
+    3. 当日预计收益分解（合约收益 + 现货收益）
+    4. 风险评估：
+       - 如果新能源出力低于预测20%怎么办？
+       - 如果现货电价下跌30%怎么办？
+    5. 核心决策摘要
+  expected_output: >
+    一份中文的综合策略报告（markdown格式），包含：
+    1. 核心决策摘要（3-5条关键建议）
+    2. 24小时发电计划表（时段、新能源出力、火电出力、总出力、预计收益）
+    3. 现货申报策略（量、价建议）
+    4. 收益预测（合约收益、现货收益、总收益）
+    5. 风险情景分析
+    6. 交易操作清单
+    全部使用中文输出，货币单位为人民币元。
+  agent: portfolio_strategist
+  output_file: output/策略报告.md
